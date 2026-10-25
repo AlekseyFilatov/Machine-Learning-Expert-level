@@ -7888,7 +7888,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -7995,7 +7995,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pymc</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pm</span>
@@ -8149,9 +8149,157 @@ Sampling: []
 </div>
 </div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[11]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>8762</pre>
+<pre>5574</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=059579bf">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># 1. Инициализация исходных данных</span>
+<span class="c1"># Задаем априорные вероятности выбора троп и условную проходимость гор</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'Гипотеза (Выбор тропы)'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'Тропа А'</span><span class="p">,</span> <span class="s1">'Тропа В'</span><span class="p">],</span>
+    <span class="s1">'Априорная вероятность P(Hᵢ)'</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+    <span class="s1">'Правдоподобие P(Успех | Hᵢ)'</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1"># Создаем DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># 2. ШАГ 1: Расчет совместной вероятности успешного прохождения (зависимость)</span>
+<span class="c1"># P(Hᵢ ∩ Успех) = P(Hᵢ) * P(Успех | Hᵢ)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Совместная вероятность P(Hᵢ ∩ Успех)'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">'Априорная вероятность P(Hᵢ)'</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Правдоподобие P(Успех | Hᵢ)'</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># 3. ШАГ 2: Расчет общей вероятности попасть в страну X (Формула полной вероятности)</span>
+<span class="c1"># Сумма совместных вероятностей дает полную вероятность P(Успех) = 0.54</span>
+<span class="n">total_success_probability</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Совместная вероятность P(Hᵢ ∩ Успех)'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="c1"># Расчет вклада каждой тропы в общий объем успеха (апостериорная вероятность)</span>
+<span class="c1"># P(Hᵢ | Успех) = P(Hᵢ ∩ Успех) / P(Успех)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Апостериорная вероятность P(Hᵢ | Успех)'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">'Совместная вероятность P(Hᵢ ∩ Успех)'</span><span class="p">]</span> <span class="o">/</span> <span class="n">total_success_probability</span>
+<span class="p">)</span>
+
+<span class="c1"># 4. ДОБАВЛЕНИЕ СТРОКИ ИТОГОВ ДЛЯ СТРОГОГО БАЙЕСОВСКОГО ФОРМАТА</span>
+<span class="n">total_row</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'Гипотеза (Выбор тропы)'</span><span class="p">:</span> <span class="s1">'🏆 Сумма (Итог)'</span><span class="p">,</span>
+    <span class="s1">'Априорная вероятность P(Hᵢ)'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Априорная вероятность P(Hᵢ)'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+    <span class="s1">'Правдоподобие P(Успех | Hᵢ)'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>  <span class="c1"># Правдоподобия не суммируются</span>
+    <span class="s1">'Совместная вероятность P(Hᵢ ∩ Успех)'</span><span class="p">:</span> <span class="n">total_success_probability</span><span class="p">,</span> <span class="c1"># Это P(Успех)</span>
+    <span class="s1">'Апостериорная вероятность P(Hᵢ | Успех)'</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Апостериорная вероятность P(Hᵢ | Успех)'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">total_row</span><span class="p">])],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Красивое промышленное форматирование колонок до нужного знака</span>
+<span class="n">df_styled</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">({</span>
+    <span class="s2">"Априорная вероятность P(Hᵢ)"</span><span class="p">:</span> <span class="s2">"</span><span class="si">{:.2f}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="s2">"Правдоподобие P(Успех | Hᵢ)"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"—"</span><span class="p">,</span>
+    <span class="s2">"Совместная вероятность P(Hᵢ ∩ Успех)"</span><span class="p">:</span> <span class="s2">"</span><span class="si">{:.4f}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="s2">"Апостериорная вероятность P(Hᵢ | Успех)"</span><span class="p">:</span> <span class="s2">"</span><span class="si">{:.6f}</span><span class="s2">"</span>
+<span class="p">})</span>
+
+<span class="c1"># Вывод результатов в интерфейс Jupyter/VS Code</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">'display.max_colwidth'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"=== БАЙЕСОВСКАЯ ТАБЛИЦА РАСПРЕДЕЛЕНИЯ ВЕРОЯТНОСТЕЙ ==="</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df_styled</span><span class="p">)</span>
+
+<span class="c1"># Безопасный расчет отношения безопасности путей (берем индексы 1 и 0, игнорируя строку итогов)</span>
+<span class="n">safety_ratio</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'Совместная вероятность P(Hᵢ ∩ Успех)'</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'Совместная вероятность P(Hᵢ ∩ Успех)'</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"="</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"🔬 АНАЛИТИЧЕСКИЙ АУДИТ МАРШРУТА:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ├── Общая вероятность успешного завершения пути P(Успех): </span><span class="si">{</span><span class="n">total_success_probability</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">total_success_probability</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%) 🎯"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ├── Доля общего успеха, которую генерирует Тропа B:       </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s1">'Апостериорная вероятность P(Hᵢ | Успех)'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  └── Синергетический эффект: Вход на тропу B безопаснее в  </span><span class="si">{</span><span class="n">safety_ratio</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> раза!"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>=== БАЙЕСОВСКАЯ ТАБЛИЦА РАСПРЕДЕЛЕНИЯ ВЕРОЯТНОСТЕЙ ===
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<style type="text/css">
+</style>
+<table id="T_3af1d">
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_3af1d_level0_col0">Гипотеза (Выбор тропы)</th>
+<th class="col_heading level0 col1" id="T_3af1d_level0_col1">Априорная вероятность P(Hᵢ)</th>
+<th class="col_heading level0 col2" id="T_3af1d_level0_col2">Правдоподобие P(Успех | Hᵢ)</th>
+<th class="col_heading level0 col3" id="T_3af1d_level0_col3">Совместная вероятность P(Hᵢ ∩ Успех)</th>
+<th class="col_heading level0 col4" id="T_3af1d_level0_col4">Апостериорная вероятность P(Hᵢ | Успех)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_3af1d_level0_row0">0</th>
+<td class="data row0 col0" id="T_3af1d_row0_col0">Тропа А</td>
+<td class="data row0 col1" id="T_3af1d_row0_col1">0.40</td>
+<td class="data row0 col2" id="T_3af1d_row0_col2">0.30</td>
+<td class="data row0 col3" id="T_3af1d_row0_col3">0.1200</td>
+<td class="data row0 col4" id="T_3af1d_row0_col4">0.222222</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_3af1d_level0_row1">1</th>
+<td class="data row1 col0" id="T_3af1d_row1_col0">Тропа В</td>
+<td class="data row1 col1" id="T_3af1d_row1_col1">0.60</td>
+<td class="data row1 col2" id="T_3af1d_row1_col2">0.70</td>
+<td class="data row1 col3" id="T_3af1d_row1_col3">0.4200</td>
+<td class="data row1 col4" id="T_3af1d_row1_col4">0.777778</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_3af1d_level0_row2">2</th>
+<td class="data row2 col0" id="T_3af1d_row2_col0">🏆 Сумма (Итог)</td>
+<td class="data row2 col1" id="T_3af1d_row2_col1">1.00</td>
+<td class="data row2 col2" id="T_3af1d_row2_col2">—</td>
+<td class="data row2 col3" id="T_3af1d_row2_col3">0.5400</td>
+<td class="data row2 col4" id="T_3af1d_row2_col4">1.000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
+================================================================================
+🔬 АНАЛИТИЧЕСКИЙ АУДИТ МАРШРУТА:
+--------------------------------------------------------------------------------
+  ├── Общая вероятность успешного завершения пути P(Успех): 0.5400 (54.0%) 🎯
+  ├── Доля общего успеха, которую генерирует Тропа B:       77.78%
+  └── Синергетический эффект: Вход на тропу B безопаснее в  3.5 раза!
+================================================================================
+</pre>
 </div>
 </div>
 </div>
@@ -8266,7 +8414,7 @@ Sampling: []
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [30]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pymc</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pm</span>
@@ -8413,9 +8561,9 @@ Sampling: []
 </div>
 </div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[30]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>37043</pre>
+<pre>19836</pre>
 </div>
 </div>
 </div>
@@ -8425,7 +8573,7 @@ Sampling: []
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [31]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -8664,7 +8812,7 @@ Sampling: []
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pymc</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pm</span>
@@ -8807,7 +8955,7 @@ CompoundStep
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>⏳ Шаг 7.2: Запуск многопоточного Марковского инференса для Задачи №2 (Лабиринт)...
+<pre>⏳ Запуск многопоточного Марковского инференса для Задачи №2 (Лабиринт)...
 </pre>
 </div>
 </div>
@@ -8851,6 +8999,194 @@ CompoundStep
   ✅ Оперативная память успешно деаллоцирована на уровне ядра ОС!
 -------------------------------------------------------------------------------------
 </pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f8afd9b5">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># 1. Задаем матрицу переходов MCMC строго с графика хитмапа</span>
+<span class="c1"># Строка 0: Current=0 -&gt; Next=0 (0.8890), Next=1 (0.1110)</span>
+<span class="c1"># Строка 1: Current=1 -&gt; Next=0 (0.1511), Next=1 (0.8489)</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">0.8890</span><span class="p">,</span> <span class="mf">0.1110</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.1511</span><span class="p">,</span> <span class="mf">0.8489</span><span class="p">]</span>
+<span class="p">])</span>
+
+<span class="c1"># 2. Находим собственные значения (w) и левые собственные векторы (v)</span>
+<span class="c1"># Чтобы найти левые векторы, транспонируем матрицу P</span>
+<span class="n">eigenvalues</span><span class="p">,</span> <span class="n">eigenvectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+<span class="c1"># 3. Ищем индекс собственного значения, равного 1 (с учетом машинной точности)</span>
+<span class="n">idx_lambda_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvalues</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))</span>
+
+<span class="c1"># 4. Извлекаем соответствующий вектор и нормализуем его (чтобы сумма долей была равна 1.0)</span>
+<span class="n">stationary_vector</span> <span class="o">=</span> <span class="n">eigenvectors</span><span class="p">[:,</span> <span class="n">idx_lambda_1</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+<span class="n">stationary_distribution</span> <span class="o">=</span> <span class="n">stationary_vector</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stationary_vector</span><span class="p">)</span>
+
+<span class="n">p_mcmc_defeat</span> <span class="o">=</span> <span class="n">stationary_distribution</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">p_mcmc_success</span> <span class="o">=</span> <span class="n">stationary_distribution</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># 5. Вывод официального математического аудита</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"🔬 АУДИТ МАРКОВСКОГО СТАЦИОНАРНОГО СОСТОЯНИЯ ЦЕПИ:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ├── Вероятность Поражения (0) на финише сэмплера: </span><span class="si">{</span><span class="n">p_mcmc_defeat</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ├── Вероятность Успеха (1) на финише сэмплера:    </span><span class="si">{</span><span class="n">p_mcmc_success</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> 🚀"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ├── Численный прогноз с графических весов MCMC:   </span><span class="si">{</span><span class="n">p_mcmc_success</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  └── Наш аналитический ответ (Сценарий Б):        0.428000 🎯"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+
+<span class="c1"># Дополнительная проверка через марковский предел (прогон цепи на 100 шагов вперед)</span>
+<span class="n">P_100</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_power</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"💡 Проверка пределом P^100 (вектор сходимости из любого состояния):</span><span class="se">\n</span><span class="si">{</span><span class="n">P_100</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>🔬 АУДИТ МАРКОВСКОГО СТАЦИОНАРНОГО СОСТОЯНИЯ ЦЕПИ:
+================================================================================
+  ├── Вероятность Поражения (0) на финише сэмплера: 0.576498
+  ├── Вероятность Успеха (1) на финише сэмплера:    0.423502 🚀
+--------------------------------------------------------------------------------
+  ├── Численный прогноз с графических весов MCMC:   0.423502
+  └── Наш аналитический ответ (Сценарий Б):        0.428000 🎯
+================================================================================
+💡 Проверка пределом P^100 (вектор сходимости из любого состояния):
+[0.57649752 0.42350248]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=96ae26bb">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"Сценарий / Траектория пути"</span><span class="p">:</span> <span class="s2">"Сценарий А: Идеальный путь (A⁺ → B⁺ → C⁺)"</span><span class="p">,</span>
+        <span class="s2">"Формула расчёта"</span><span class="p">:</span> <span class="s2">"0.6 × 0.4 × 0.7"</span><span class="p">,</span>
+        <span class="s2">"Точный расчёт"</span><span class="p">:</span> <span class="mf">0.168000</span><span class="p">,</span>
+        <span class="s2">"Доля в общем успехе"</span><span class="p">:</span> <span class="s2">"39.26%"</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"Сценарий / Траектория пути"</span><span class="p">:</span> <span class="s2">"Траектория 2: Ошибка на старте (A⁻ → B⁺ → C⁺)"</span><span class="p">,</span>
+        <span class="s2">"Формула расчёта"</span><span class="p">:</span> <span class="s2">"0.4 × 0.2 × 0.7"</span><span class="p">,</span>
+        <span class="s2">"Точный расчёт"</span><span class="p">:</span> <span class="mf">0.056000</span><span class="p">,</span>
+        <span class="s2">"Доля в общем успехе"</span><span class="p">:</span> <span class="s2">"13.08%"</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"Сценарий / Траектория пути"</span><span class="p">:</span> <span class="s2">"Траектория 3: Ошибка в центре (A⁺ → B⁻ → C⁺)"</span><span class="p">,</span>
+        <span class="s2">"Формула расчёта"</span><span class="p">:</span> <span class="s2">"0.6 × 0.6 × 0.3"</span><span class="p">,</span>
+        <span class="s2">"Точный расчёт"</span><span class="p">:</span> <span class="mf">0.108000</span><span class="p">,</span>
+        <span class="s2">"Доля в общем успехе"</span><span class="p">:</span> <span class="s2">"25.23%"</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"Сценарий / Траектория пути"</span><span class="p">:</span> <span class="s2">"Траектория 4: Камбэк с финала (A⁻ → B⁻ → C⁺)"</span><span class="p">,</span>
+        <span class="s2">"Формула расчёта"</span><span class="p">:</span> <span class="s2">"0.4 × 0.8 × 0.3"</span><span class="p">,</span>
+        <span class="s2">"Точный расчёт"</span><span class="p">:</span> <span class="mf">0.096000</span><span class="p">,</span>
+        <span class="s2">"Доля в общем успехе"</span><span class="p">:</span> <span class="s2">"22.43%"</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"Сценарий / Траектория пути"</span><span class="p">:</span> <span class="s2">"🏆 Сценарий Б: Полная вероятность (Сумма путей)"</span><span class="p">,</span>
+        <span class="s2">"Формула расчёта"</span><span class="p">:</span> <span class="s2">"0.168 + 0.056 + 0.108 + 0.096"</span><span class="p">,</span>
+        <span class="s2">"Точный расчёт"</span><span class="p">:</span> <span class="mf">0.428000</span><span class="p">,</span>
+        <span class="s2">"Доля в общем успехе"</span><span class="p">:</span> <span class="s2">"100.00%"</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Стилизация вывода чисел с шестью знаками после запятой</span>
+<span class="n">df_styled</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">({</span><span class="s2">"Точный расчёт"</span><span class="p">:</span> <span class="s2">"</span><span class="si">{:.6f}</span><span class="s2">"</span><span class="p">})</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">'display.max_colwidth'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df_styled</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<style type="text/css">
+</style>
+<table id="T_ac856">
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_ac856_level0_col0">Сценарий / Траектория пути</th>
+<th class="col_heading level0 col1" id="T_ac856_level0_col1">Формула расчёта</th>
+<th class="col_heading level0 col2" id="T_ac856_level0_col2">Точный расчёт</th>
+<th class="col_heading level0 col3" id="T_ac856_level0_col3">Доля в общем успехе</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_ac856_level0_row0">0</th>
+<td class="data row0 col0" id="T_ac856_row0_col0">Сценарий А: Идеальный путь (A⁺ → B⁺ → C⁺)</td>
+<td class="data row0 col1" id="T_ac856_row0_col1">0.6 × 0.4 × 0.7</td>
+<td class="data row0 col2" id="T_ac856_row0_col2">0.168000</td>
+<td class="data row0 col3" id="T_ac856_row0_col3">39.26%</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_ac856_level0_row1">1</th>
+<td class="data row1 col0" id="T_ac856_row1_col0">Траектория 2: Ошибка на старте (A⁻ → B⁺ → C⁺)</td>
+<td class="data row1 col1" id="T_ac856_row1_col1">0.4 × 0.2 × 0.7</td>
+<td class="data row1 col2" id="T_ac856_row1_col2">0.056000</td>
+<td class="data row1 col3" id="T_ac856_row1_col3">13.08%</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_ac856_level0_row2">2</th>
+<td class="data row2 col0" id="T_ac856_row2_col0">Траектория 3: Ошибка в центре (A⁺ → B⁻ → C⁺)</td>
+<td class="data row2 col1" id="T_ac856_row2_col1">0.6 × 0.6 × 0.3</td>
+<td class="data row2 col2" id="T_ac856_row2_col2">0.108000</td>
+<td class="data row2 col3" id="T_ac856_row2_col3">25.23%</td>
+</tr>
+<tr>
+<th class="row_heading level0 row3" id="T_ac856_level0_row3">3</th>
+<td class="data row3 col0" id="T_ac856_row3_col0">Траектория 4: Камбэк с финала (A⁻ → B⁻ → C⁺)</td>
+<td class="data row3 col1" id="T_ac856_row3_col1">0.4 × 0.8 × 0.3</td>
+<td class="data row3 col2" id="T_ac856_row3_col2">0.096000</td>
+<td class="data row3 col3" id="T_ac856_row3_col3">22.43%</td>
+</tr>
+<tr>
+<th class="row_heading level0 row4" id="T_ac856_level0_row4">4</th>
+<td class="data row4 col0" id="T_ac856_row4_col0">🏆 Сценарий Б: Полная вероятность (Сумма путей)</td>
+<td class="data row4 col1" id="T_ac856_row4_col1">0.168 + 0.056 + 0.108 + 0.096</td>
+<td class="data row4 col2" id="T_ac856_row4_col2">0.428000</td>
+<td class="data row4 col3" id="T_ac856_row4_col3">100.00%</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -8918,7 +9254,7 @@ CompoundStep
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [26]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pymc</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pm</span>
@@ -9112,7 +9448,7 @@ Sampling: []
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [28]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pymc</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pm</span>
@@ -9241,7 +9577,7 @@ Metropolis: [is_sick]
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Sampling 4 chains for 3_000 tune and 15_000 draw iterations (12_000 + 60_000 draws total) took 6 seconds.
+<pre>Sampling 4 chains for 3_000 tune and 15_000 draw iterations (12_000 + 60_000 draws total) took 5 seconds.
 </pre>
 </div>
 </div>
@@ -9294,6 +9630,191 @@ Metropolis: [is_sick]
 <li>Построенная матрица переходных вероятностей подтвердила отсутствие занулений на путях миграции сэмплера, гарантируя эргодичность процесса.<br/>
 Сочетание автокорреляции, матрицы переходов и R-hat = 1.00 полностью исключает риск локального застревания алгоритма Метрополиса в разреженном пространстве гипотез, доказывая абсолютную валидность полученного скора 0.0879.</li>
 </ol>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e16bd641">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># 1. Задаем матрицу переходов MCMC строго с хитмапа</span>
+<span class="c1"># Строка 0 (Здоров): Next=0 (0.9768), Next=1 (0.0232)</span>
+<span class="c1"># Строка 1 (Болен): Next=0 (0.2402), Next=1 (0.7598)</span>
+<span class="n">P_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">0.9768</span><span class="p">,</span> <span class="mf">0.0232</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.2402</span><span class="p">,</span> <span class="mf">0.7598</span><span class="p">]</span>
+<span class="p">])</span>
+
+<span class="c1"># 2. Находим левые собственные векторы через транспонирование</span>
+<span class="n">eigenvalues</span><span class="p">,</span> <span class="n">eigenvectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">P_test</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+<span class="c1"># 3. Извлекаем вектор, соответствующий стационарному значению lambda = 1</span>
+<span class="n">idx_lambda_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvalues</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))</span>
+<span class="n">stationary_vector</span> <span class="o">=</span> <span class="n">eigenvectors</span><span class="p">[:,</span> <span class="n">idx_lambda_1</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+
+<span class="c1"># 4. Нормализуем вероятности (сумма долей = 1.0)</span>
+<span class="n">stationary_distribution</span> <span class="o">=</span> <span class="n">stationary_vector</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stationary_vector</span><span class="p">)</span>
+
+<span class="n">p_mcmc_healthy</span> <span class="o">=</span> <span class="n">stationary_distribution</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">p_mcmc_sick</span> <span class="o">=</span> <span class="n">stationary_distribution</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c1"># 5. Вывод официального аудита сходимости</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"🔬 МАТЕМАТИЧЕСКИЙ ПЕРЕХОД ОТ МАТРИЦЫ К ОТВЕТУ ЗАДАЧИ №3:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ├── Доля сэмплов 'Здоров (0)' на финише цепи:   </span><span class="si">{</span><span class="n">p_mcmc_healthy</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> (91.21%)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ├── Доля сэмплов 'Болен (1)' на финише цепи:     </span><span class="si">{</span><span class="n">p_mcmc_sick</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> 🚀"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ├── Итоговый численный скор из матрицы MCMC:    </span><span class="si">{</span><span class="n">p_mcmc_sick</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  └── Наш аналитический ответ из байесовской таблицы: 0.087557 🎯"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>🔬 МАТЕМАТИЧЕСКИЙ ПЕРЕХОД ОТ МАТРИЦЫ К ОТВЕТУ ЗАДАЧИ №3:
+================================================================================
+  ├── Доля сэмплов 'Здоров (0)' на финише цепи:   0.911921 (91.21%)
+  ├── Доля сэмплов 'Болен (1)' на финише цепи:     0.088079 🚀
+--------------------------------------------------------------------------------
+  ├── Итоговый численный скор из матрицы MCMC:    0.088079
+  └── Наш аналитический ответ из байесовской таблицы: 0.087557 🎯
+================================================================================
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f8d1a43e">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [25]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># 1. Задаем исходные данные задачи</span>
+<span class="n">prior_sick</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">prior_healthy</span> <span class="o">=</span> <span class="mf">0.99</span>
+
+<span class="n">likelihood_sick</span> <span class="o">=</span> <span class="mf">0.95</span>    <span class="c1"># Чувствительность</span>
+<span class="n">likelihood_healthy</span> <span class="o">=</span> <span class="mf">0.10</span>   <span class="c1"># Ложноположительный исход (1 - Специфичность)</span>
+
+<span class="c1"># 2. Математический расчет колонок</span>
+<span class="n">joint_sick</span> <span class="o">=</span> <span class="n">prior_sick</span> <span class="o">*</span> <span class="n">likelihood_sick</span>
+<span class="n">joint_healthy</span> <span class="o">=</span> <span class="n">prior_healthy</span> <span class="o">*</span> <span class="n">likelihood_healthy</span>
+
+<span class="c1"># Полная вероятность P(+) — это сумма совместных вероятностей</span>
+<span class="n">p_positive</span> <span class="o">=</span> <span class="n">joint_sick</span> <span class="o">+</span> <span class="n">joint_healthy</span>
+
+<span class="n">posterior_sick</span> <span class="o">=</span> <span class="n">joint_sick</span> <span class="o">/</span> <span class="n">p_positive</span>
+<span class="n">posterior_healthy</span> <span class="o">=</span> <span class="n">joint_healthy</span> <span class="o">/</span> <span class="n">p_positive</span>
+
+<span class="c1"># 3. Сборка байесовской структуры данных</span>
+<span class="n">bayes_data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"Гипотеза (Hi)"</span><span class="p">:</span> <span class="s2">"H₁: Болен"</span><span class="p">,</span>
+        <span class="s2">"Априорная верояность P(Hi)"</span><span class="p">:</span> <span class="n">prior_sick</span><span class="p">,</span>
+        <span class="s2">"Правдоподобие P(+ | Hi)"</span><span class="p">:</span> <span class="n">likelihood_sick</span><span class="p">,</span>
+        <span class="s2">"Совместная вероятность P(Hi ∩ +)"</span><span class="p">:</span> <span class="n">joint_sick</span><span class="p">,</span>
+        <span class="s2">"Апостериорная вероятность P(Hi | +)"</span><span class="p">:</span> <span class="n">posterior_sick</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"Гипотеза (Hi)"</span><span class="p">:</span> <span class="s2">"H₂: Здоров"</span><span class="p">,</span>
+        <span class="s2">"Априорная верояность P(Hi)"</span><span class="p">:</span> <span class="n">prior_healthy</span><span class="p">,</span>
+        <span class="s2">"Правдоподобие P(+ | Hi)"</span><span class="p">:</span> <span class="n">likelihood_healthy</span><span class="p">,</span>
+        <span class="s2">"Совместная вероятность P(Hi ∩ +)"</span><span class="p">:</span> <span class="n">joint_healthy</span><span class="p">,</span>
+        <span class="s2">"Апостериорная вероятность P(Hi | +)"</span><span class="p">:</span> <span class="n">posterior_healthy</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"Гипотеза (Hi)"</span><span class="p">:</span> <span class="s2">"🏆 Сумма (Итог)"</span><span class="p">,</span>
+        <span class="s2">"Априорная верояность P(Hi)"</span><span class="p">:</span> <span class="n">prior_sick</span> <span class="o">+</span> <span class="n">prior_healthy</span><span class="p">,</span>
+        <span class="s2">"Правдоподобие P(+ | Hi)"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>  <span class="c1"># Суммировать правдоподобия нельзя</span>
+        <span class="s2">"Совместная вероятность P(Hi ∩ +)"</span><span class="p">:</span> <span class="n">p_positive</span><span class="p">,</span>  <span class="c1"># Это P(+)</span>
+        <span class="s2">"Апостериорная вероятность P(Hi | +)"</span><span class="p">:</span> <span class="n">posterior_sick</span> <span class="o">+</span> <span class="n">posterior_healthy</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">df_bayes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">bayes_data</span><span class="p">)</span>
+
+<span class="c1"># Промышленное форматирование чисел до 6 знаков (пропуская пустые ячейки NaN)</span>
+<span class="n">df_styled</span> <span class="o">=</span> <span class="n">df_bayes</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">({</span>
+    <span class="s2">"Априорная верояность P(Hi)"</span><span class="p">:</span> <span class="s2">"</span><span class="si">{:.2f}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="s2">"Правдоподобие P(+ | Hi)"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"—"</span><span class="p">,</span>
+    <span class="s2">"Совместная вероятность P(Hi ∩ +)"</span><span class="p">:</span> <span class="s2">"</span><span class="si">{:.4f}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="s2">"Апостериорная вероятность P(Hi | +)"</span><span class="p">:</span> <span class="s2">"</span><span class="si">{:.6f}</span><span class="s2">"</span>
+<span class="p">})</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">'display.max_colwidth'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df_styled</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<style type="text/css">
+</style>
+<table id="T_c423b">
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_c423b_level0_col0">Гипотеза (Hi)</th>
+<th class="col_heading level0 col1" id="T_c423b_level0_col1">Априорная верояность P(Hi)</th>
+<th class="col_heading level0 col2" id="T_c423b_level0_col2">Правдоподобие P(+ | Hi)</th>
+<th class="col_heading level0 col3" id="T_c423b_level0_col3">Совместная вероятность P(Hi ∩ +)</th>
+<th class="col_heading level0 col4" id="T_c423b_level0_col4">Апостериорная вероятность P(Hi | +)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_c423b_level0_row0">0</th>
+<td class="data row0 col0" id="T_c423b_row0_col0">H₁: Болен</td>
+<td class="data row0 col1" id="T_c423b_row0_col1">0.01</td>
+<td class="data row0 col2" id="T_c423b_row0_col2">0.95</td>
+<td class="data row0 col3" id="T_c423b_row0_col3">0.0095</td>
+<td class="data row0 col4" id="T_c423b_row0_col4">0.087558</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_c423b_level0_row1">1</th>
+<td class="data row1 col0" id="T_c423b_row1_col0">H₂: Здоров</td>
+<td class="data row1 col1" id="T_c423b_row1_col1">0.99</td>
+<td class="data row1 col2" id="T_c423b_row1_col2">0.10</td>
+<td class="data row1 col3" id="T_c423b_row1_col3">0.0990</td>
+<td class="data row1 col4" id="T_c423b_row1_col4">0.912442</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_c423b_level0_row2">2</th>
+<td class="data row2 col0" id="T_c423b_row2_col0">🏆 Сумма (Итог)</td>
+<td class="data row2 col1" id="T_c423b_row2_col1">1.00</td>
+<td class="data row2 col2" id="T_c423b_row2_col2">—</td>
+<td class="data row2 col3" id="T_c423b_row2_col3">0.1085</td>
+<td class="data row2 col4" id="T_c423b_row2_col4">1.000000</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -9351,7 +9872,7 @@ Metropolis: [is_sick]
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [42]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [26]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pymc</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pm</span>
@@ -9495,7 +10016,7 @@ Metropolis: [course]
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
-<pre>Sampling 4 chains for 3_000 tune and 15_000 draw iterations (12_000 + 60_000 draws total) took 6 seconds.
+<pre>Sampling 4 chains for 3_000 tune and 15_000 draw iterations (12_000 + 60_000 draws total) took 5 seconds.
 </pre>
 </div>
 </div>
@@ -9586,7 +10107,7 @@ Metropolis: [course]
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [48]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [27]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pymc</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pm</span>
@@ -9732,7 +10253,7 @@ NUTS: [theta]
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [49]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [28]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -9818,7 +10339,7 @@ NUTS: [theta]
 </div>
 </div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[49]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[28]:</div>
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
 <pre>8752</pre>
 </div>
@@ -9869,7 +10390,7 @@ NUTS: [theta]
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [51]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [29]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sympy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rational</span>
@@ -9928,6 +10449,136 @@ NUTS: [theta]
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>В байесовском анализе макро-систем нам необязательно запускать тяжелый симулятор для поиска среднего значения популяции . Благодаря свойству сопряженности Дирихле-Мультиномиальной пары, интеграл прогностического распределения берется аналитически.<br/>
 Точный расчет математического ожидания Дирихле через нормирование векторов счетчиков дает несократимую дробь 42/59 (0.711864). Это число является математическим эталоном сглаживания, к которому стремилась наша симуляция во второй ячейке, что окончательно доказывает фундаментальную строгость и изящество сопряженного байесовского подхода над градиентными капризами NUTS</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=d9b5274d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [30]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># 1. Параметры из ТЗ</span>
+<span class="n">p_alg</span><span class="p">,</span> <span class="n">p_ana</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span>
+<span class="n">p_pass_alg</span><span class="p">,</span> <span class="n">p_pass_ana</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span>
+<span class="n">N_base</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="c1"># --- Вариант 1: Точечный Байес (Один студент) ---</span>
+<span class="n">joint_alg</span> <span class="o">=</span> <span class="n">p_alg</span> <span class="o">*</span> <span class="n">p_pass_alg</span>
+<span class="n">joint_ana</span> <span class="o">=</span> <span class="n">p_ana</span> <span class="o">*</span> <span class="n">p_pass_ana</span>
+<span class="n">p_pass_total</span> <span class="o">=</span> <span class="n">joint_alg</span> <span class="o">+</span> <span class="n">joint_ana</span>
+
+<span class="n">post_student_alg</span> <span class="o">=</span> <span class="n">joint_alg</span> <span class="o">/</span> <span class="n">p_pass_total</span>
+<span class="n">post_student_ana</span> <span class="o">=</span> <span class="n">joint_ana</span> <span class="o">/</span> <span class="n">p_pass_total</span>
+
+<span class="c1"># --- Вариант 2: Макро-вывод Дирихле (Популяция) ---</span>
+<span class="n">alpha_prior_alg</span> <span class="o">=</span> <span class="n">p_alg</span> <span class="o">*</span> <span class="n">N_base</span>
+<span class="n">alpha_prior_ana</span> <span class="o">=</span> <span class="n">p_ana</span> <span class="o">*</span> <span class="n">N_base</span>
+
+<span class="n">success_alg</span> <span class="o">=</span> <span class="n">alpha_prior_alg</span> <span class="o">*</span> <span class="n">p_pass_alg</span>
+<span class="n">success_ana</span> <span class="o">=</span> <span class="n">alpha_prior_ana</span> <span class="o">*</span> <span class="n">p_pass_ana</span>
+
+<span class="n">alpha_post_alg</span> <span class="o">=</span> <span class="n">alpha_prior_alg</span> <span class="o">+</span> <span class="n">success_alg</span>
+<span class="n">alpha_post_ana</span> <span class="o">=</span> <span class="n">alpha_prior_ana</span> <span class="o">+</span> <span class="n">success_ana</span>
+
+<span class="n">dirichlet_mean_alg</span> <span class="o">=</span> <span class="n">alpha_post_alg</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha_post_alg</span> <span class="o">+</span> <span class="n">alpha_post_ana</span><span class="p">)</span>
+<span class="n">dirichlet_mean_ana</span> <span class="o">=</span> <span class="n">alpha_post_ana</span> <span class="o">/</span> <span class="p">(</span><span class="n">alpha_post_alg</span> <span class="o">+</span> <span class="n">alpha_post_ana</span><span class="p">)</span>
+
+<span class="c1"># 2. Сборка сводной таблицы</span>
+<span class="n">comparative_data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"Курс / Гипотеза (Hi)"</span><span class="p">:</span> <span class="s2">"H₁: Курс Алгебры"</span><span class="p">,</span>
+        <span class="s2">"Априорный прогноз"</span><span class="p">:</span> <span class="n">p_alg</span><span class="p">,</span>
+        <span class="s2">"Успеваемость"</span><span class="p">:</span> <span class="n">p_pass_alg</span><span class="p">,</span>
+        <span class="s2">"Точечный Байес (Студент)"</span><span class="p">:</span> <span class="n">post_student_alg</span><span class="p">,</span>
+        <span class="s2">"Макро-Дирихле (Популяция)"</span><span class="p">:</span> <span class="n">dirichlet_mean_alg</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"Курс / Гипотеза (Hi)"</span><span class="p">:</span> <span class="s2">"H₂: Курс Анализа"</span><span class="p">,</span>
+        <span class="s2">"Априорный прогноз"</span><span class="p">:</span> <span class="n">p_ana</span><span class="p">,</span>
+        <span class="s2">"Успеваемость"</span><span class="p">:</span> <span class="n">p_pass_ana</span><span class="p">,</span>
+        <span class="s2">"Точечный Байес (Студент)"</span><span class="p">:</span> <span class="n">post_student_ana</span><span class="p">,</span>
+        <span class="s2">"Макро-Дирихле (Популяция)"</span><span class="p">:</span> <span class="n">dirichlet_mean_ana</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">"Курс / Гипотеза (Hi)"</span><span class="p">:</span> <span class="s2">"🏆 Сумма (Итог)"</span><span class="p">,</span>
+        <span class="s2">"Априорный прогноз"</span><span class="p">:</span> <span class="n">p_alg</span> <span class="o">+</span> <span class="n">p_ana</span><span class="p">,</span>
+        <span class="s2">"Успеваемость"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="s2">"Точечный Байес (Студент)"</span><span class="p">:</span> <span class="n">post_student_alg</span> <span class="o">+</span> <span class="n">post_student_ana</span><span class="p">,</span>
+        <span class="s2">"Макро-Дирихле (Популяция)"</span><span class="p">:</span> <span class="n">dirichlet_mean_alg</span> <span class="o">+</span> <span class="n">dirichlet_mean_ana</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">df_compare</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">comparative_data</span><span class="p">)</span>
+
+<span class="c1"># Красивое промышленное форматирование колонок</span>
+<span class="n">df_styled</span> <span class="o">=</span> <span class="n">df_compare</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">({</span>
+    <span class="s2">"Априорный прогноз"</span><span class="p">:</span> <span class="s2">"</span><span class="si">{:.2f}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="s2">"Успеваемость"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"—"</span><span class="p">,</span>
+    <span class="s2">"Точечный Байес (Студент)"</span><span class="p">:</span> <span class="s2">"</span><span class="si">{:.6f}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="s2">"Макро-Дирихле (Популяция)"</span><span class="p">:</span> <span class="s2">"</span><span class="si">{:.6f}</span><span class="s2">"</span>
+<span class="p">})</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">'display.max_colwidth'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df_styled</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<style type="text/css">
+</style>
+<table id="T_cceb3">
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_cceb3_level0_col0">Курс / Гипотеза (Hi)</th>
+<th class="col_heading level0 col1" id="T_cceb3_level0_col1">Априорный прогноз</th>
+<th class="col_heading level0 col2" id="T_cceb3_level0_col2">Успеваемость</th>
+<th class="col_heading level0 col3" id="T_cceb3_level0_col3">Точечный Байес (Студент)</th>
+<th class="col_heading level0 col4" id="T_cceb3_level0_col4">Макро-Дирихле (Популяция)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_cceb3_level0_row0">0</th>
+<td class="data row0 col0" id="T_cceb3_row0_col0">H₁: Курс Алгебры</td>
+<td class="data row0 col1" id="T_cceb3_row0_col1">0.70</td>
+<td class="data row0 col2" id="T_cceb3_row0_col2">0.80</td>
+<td class="data row0 col3" id="T_cceb3_row0_col3">0.727273</td>
+<td class="data row0 col4" id="T_cceb3_row0_col4">0.711864</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_cceb3_level0_row1">1</th>
+<td class="data row1 col0" id="T_cceb3_row1_col0">H₂: Курс Анализа</td>
+<td class="data row1 col1" id="T_cceb3_row1_col1">0.30</td>
+<td class="data row1 col2" id="T_cceb3_row1_col2">0.70</td>
+<td class="data row1 col3" id="T_cceb3_row1_col3">0.272727</td>
+<td class="data row1 col4" id="T_cceb3_row1_col4">0.288136</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_cceb3_level0_row2">2</th>
+<td class="data row2 col0" id="T_cceb3_row2_col0">🏆 Сумма (Итог)</td>
+<td class="data row2 col1" id="T_cceb3_row2_col1">1.00</td>
+<td class="data row2 col2" id="T_cceb3_row2_col2">—</td>
+<td class="data row2 col3" id="T_cceb3_row2_col3">1.000000</td>
+<td class="data row2 col4" id="T_cceb3_row2_col4">1.000000</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
